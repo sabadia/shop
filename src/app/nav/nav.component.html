@@ -1,0 +1,155 @@
+<mat-toolbar color="primary" class="toolbar-container">
+  <button
+    type="button"
+    aria-label="Toggle sidenav"
+    mat-icon-button
+    (click)="drawer.toggle()"
+    *ngIf="isHandset$ | async"
+    (click)="isSideNavOpen = !isSideNavOpen"
+  >
+    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+  </button>
+  <button mat-button routerLink="" (click)="closeSideNav(drawer)">Shop</button>
+  <button
+    class="warp"
+    mat-button
+    routerLink="/shopping-cart"
+    *ngIf="!(isHandset$ | async)"
+  >
+    Shopping Cart&nbsp;
+    <span class="badge badge-warning badge-pill">{{
+      shoppingCartItemCount
+    }}</span>
+  </button>
+  <div class="search-container"></div>
+  <button
+    mat-button
+    (click)="openLogin()"
+    *ngIf="!(isHandset$ | async) && !appUser"
+  >
+    login
+  </button>
+  <div *ngIf="appUser && !(isHandset$ | async)">
+    <button mat-button [matMenuTriggerFor]="menu">
+      {{ appUser?.name }}
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item routerLink="my-orders">My orders</button>
+      <button mat-menu-item routerLink="admin/orders" *ngIf="appUser?.isAdmin">
+        Manage Orders
+      </button>
+      <button
+        mat-menu-item
+        routerLink="admin/products"
+        *ngIf="appUser?.isAdmin"
+      >
+        Manage Products
+      </button>
+      <button mat-menu-item (click)="logOut()">
+        Log Out
+      </button>
+    </mat-menu>
+  </div>
+</mat-toolbar>
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav
+    [(opened)]="opened"
+    #drawer
+    class="sidenav"
+    fixedInViewport="true"
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="!(isHandset$ | async)"
+  >
+    <mat-nav-list>
+      <a
+        mat-list-item
+        (click)="openLogin()"
+        (click)="closeSideNav(drawer)"
+        *ngIf="(isHandset$ | async) && !appUser"
+      >
+        login
+      </a>
+      <div *ngIf="appUser && (isHandset$ | async)">
+        <a mat-list-item [matMenuTriggerFor]="menu">
+          {{ appUser?.name }}
+          <mat-icon>arrow_drop_down</mat-icon>
+        </a>
+        <mat-menu #menu="matMenu">
+          <button
+            mat-menu-item
+            (click)="closeSideNav(drawer)"
+            routerLink="my-orders"
+          >
+            My orders
+          </button>
+          <button
+            mat-menu-item
+            (click)="closeSideNav(drawer)"
+            routerLink="admin/orders"
+            *ngIf="appUser?.isAdmin"
+          >
+            Manage Orders
+          </button>
+          <button
+            mat-menu-item
+            (click)="closeSideNav(drawer)"
+            routerLink="admin/products"
+            *ngIf="appUser?.isAdmin"
+          >
+            Manage Products
+          </button>
+          <button
+            mat-menu-item
+            (click)="closeSideNav(drawer)"
+            (click)="logOut()"
+          >
+            Log Out
+          </button>
+        </mat-menu>
+      </div>
+      <a
+        mat-list-item
+        routerLink="/shopping-cart"
+        (click)="closeSideNav(drawer)"
+        *ngIf="isHandset$ | async"
+        >Shopping Cart &nbsp;
+        <span class="badge badge-warning badge-pill">{{
+          shoppingCartItemCount
+        }}</span>
+      </a>
+    </mat-nav-list>
+    <mat-toolbar>Product Category</mat-toolbar>
+    <mat-nav-list>
+      <a
+        mat-list-item
+        (click)="closeSideNav(drawer)"
+        routerLinkActive
+        #routerLinkActiveInstance="routerLinkActive"
+        [attr.tabindex]="routerLinkActiveInstance.isActive ? 0 : -1"
+        [class.list-item-active]="routerLinkActiveInstance.isActive"
+        routerLink="/"
+        [queryParams]="{ category: 'all' }"
+        >All Products</a
+      >
+      <a
+        mat-list-item
+        (click)="closeSideNav(drawer)"
+        *ngFor="let c of categories$ | async"
+        routerLinkActive
+        #routerLinkActiveInstance="routerLinkActive"
+        [attr.tabindex]="routerLinkActiveInstance.isActive ? 0 : -1"
+        [class.list-item-active]="routerLinkActiveInstance.isActive"
+        routerLink="/"
+        [queryParams]="{ category: c.key }"
+        >{{ c.payload.val().name }}</a
+      >
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div class="container">
+      <ng-content></ng-content>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

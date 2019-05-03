@@ -1,0 +1,63 @@
+.list-item-active {
+  font-weight: bold;
+  color: #722291;
+}
+
+.sidenav-container {
+  height: 100%;
+}
+.warp {
+  padding: 0px;
+  width: 135px;
+}
+.sidenav {
+  width: 200px;
+}
+.container {
+  margin-top: 20px;
+}
+
+.toolbar-container {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+.sidenav {
+  margin-top: 56px;
+  background-color: white;
+}
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+.search {
+  font-size: 12px;
+  margin: 1px;
+  width: 250px;
+}
+.search-min {
+  font-size: 12px;
+  width: 130px;
+  margin-left: 10px;
+}
+.button-container {
+  width: 100%;
+}
