@@ -1,4 +1,8 @@
-import { MatButtonModule } from '@angular/material';
+import {
+  MatButtonModule,
+  MatHorizontalStepper,
+  MatStepperModule
+} from '@angular/material';
 import { ProductsComponent } from './products/products.component';
 import { HomeComponent } from './home/home.component';
 import { CheckOutComponent } from './check-out/check-out.component';
@@ -10,6 +14,8 @@ import { MyOrdersComponent } from './my-orders/my-orders.component';
 import { OrderSuccessComponent } from './order-success/order-success.component';
 import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
 import { AuthGuardService } from '../auth-guard.service';
+import { FormsModule } from '@angular/forms';
+import { OrderDetailComponent } from './order-detail/order-detail.component';
 
 @NgModule({
   declarations: [
@@ -18,8 +24,15 @@ import { AuthGuardService } from '../auth-guard.service';
     MyOrdersComponent,
     OrderSuccessComponent,
     ProductsComponent,
-    ShoppingCartComponent
+    ShoppingCartComponent,
+    OrderDetailComponent
   ],
-  imports: [CommonModule, ShopRoutingModule, MatButtonModule]
+  imports: [
+    CommonModule,
+    ShopRoutingModule,
+    MatButtonModule,
+    FormsModule,
+    MatStepperModule
+  ]
 })
 export class ShopModule {}

@@ -1,3 +1,4 @@
+import { OrderService } from './order.service';
 import { CategoryService } from './category.service';
 import { AdminAuthGuardService } from './admin-auth-guard.service';
 import { AuthGuardService } from './auth-guard.service';
@@ -36,9 +37,10 @@ import { FormsModule } from '@angular/forms';
 import { ProductService } from './product.service';
 import { DataTableModule } from 'angular7-data-table';
 import { ShoppingCartService } from './shopping-cart.service';
+import { LoadingSpinnerComponent } from './ui/loading-spinner/loading-spinner.component';
 
 @NgModule({
-  declarations: [AppComponent, NavComponent],
+  declarations: [AppComponent, NavComponent, LoadingSpinnerComponent],
   imports: [
     FormsModule,
     BrowserModule,
@@ -71,8 +73,11 @@ import { ShoppingCartService } from './shopping-cart.service';
     AdminAuthGuardService,
     CategoryService,
     ProductService,
-    ShoppingCartService
+    ShoppingCartService,
+    OrderService
   ],
+  exports: [LoadingSpinnerComponent],
+
   bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -1,0 +1,71 @@
+<div class="row" *ngIf="order$ | async as order">
+  <div class="col-md">
+    <div>
+      <div class="card-body">
+        <h5 class="card-title">Shipping Informaton</h5>
+
+        <ul class="list-group ">
+          <li class="list-group-item list-group-flush">
+            Name:
+            <div class="float-right">
+              {{ order.name }}
+            </div>
+          </li>
+          <li class="list-group-item list-group-flush">
+            Email:
+            <div class="float-right">
+              {{ order.email }}
+            </div>
+          </li>
+          <li class="list-group-item list-group-flush">
+            Phone no:
+            <div class="float-right">
+              {{ order.phone }}
+            </div>
+          </li>
+          <li class="list-group-item list-group-flush">
+            Address:
+            <div class="float-right">
+              {{ order.address }}
+            </div>
+          </li>
+          <li class="list-group-item list-group-flush">
+            Order Date:
+            <div class="float-right">
+              {{ order.dateCreated }}
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-md">
+    <div>
+      <div class="card-body">
+        <h5 class="card-title">Order Summary</h5>
+        <p class="card-text">
+          You Ordered {{ order.getProductCount() }}
+          <span *ngIf="order.getProductCount() > 1">Products</span
+          ><span *ngIf="order.getProductCount() === 1">Product</span>
+        </p>
+        <ul class="list-group">
+          <li
+            class="list-group-item list-group-flush"
+            *ngFor="let cartProduct of order.cartProducts"
+          >
+            {{ cartProduct.quantity }} x {{ cartProduct.title }}
+            <div class="float-right">
+              {{ cartProduct.totalPrice() | currency: 'BDT ' }}
+            </div>
+          </li>
+          <li class="list-group-item font-weight-bold">
+            Total
+            <div class="float-right">
+              {{ order.totalPrice | currency: 'BDT ' }}
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

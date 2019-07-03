@@ -12,6 +12,7 @@
     (keyup)="filter(query.value)"
   />
 </p>
+From - {{ view.first }} to - {{ view.last }}
 <table class="table">
   <thead>
     <tr>
@@ -21,14 +22,25 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let p of filteredProducts">
-      <td>{{ p.payload.val().title }}</td>
-      <td>{{ p.payload.val().price }}</td>
+    <tr *ngFor="let p of filteredProducts.slice(view.first - 1, view.last)">
+      <td>
+        <figure class="figure">
+          <img
+            [src]="p.imageUrl"
+            class="figure-img img-fluid circle thumbnail"
+            alt=""
+          />
+          <figcaption class="figure-caption">
+            {{ p.title }}
+          </figcaption>
+        </figure>
+      </td>
+      <td>{{ p.price | currency: 'BDT ' }}</td>
       <td>
         <button
           mat-button
           color="primary"
-          [routerLink]="['/admin/products/' + p.key]"
+          [routerLink]="['/admin/products/' + p.id]"
         >
           Edit
         </button>
@@ -36,3 +48,26 @@
     </tr>
   </tbody>
 </table>
+<div aria-label="Page navigation">
+  <ul class="pagination pagination-sm justify-content-center float-right">
+    <li class="page-item ">
+      <button class="page-link" (click)="pagination(currentIndex - 1)">
+        Previous
+      </button>
+    </li>
+    <li
+      *ngFor="let index of range()"
+      class="page-item"
+      [ngClass]="{ disabled: currentIndex === index }"
+    >
+      <button class="page-link" (click)="pagination(index)">
+        {{ index }}
+      </button>
+    </li>
+    <li>
+      <button class="page-link" (click)="pagination(currentIndex + 1)">
+        Next
+      </button>
+    </li>
+  </ul>
+</div>

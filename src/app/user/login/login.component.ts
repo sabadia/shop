@@ -19,7 +19,8 @@ export class LoginComponent implements OnInit {
   }
 
   loginWithFacebook() {
-    this.auth.loginWithFacebook();
+    this.auth
+      .loginWithFacebook()
   }
 
   closeLoginDialog(): void {

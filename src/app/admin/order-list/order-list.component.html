@@ -1,0 +1,73 @@
+<p>
+  <input
+    #query
+    type="text"
+    class="form-control"
+    placeholder="Search..."
+    (keyup)="filter(query.value)"
+  />
+</p>
+<div class="row">
+  <div class="col-md">
+    <p>Not delivered Orders</p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Order Date</th>
+          <th>Total Price</th>
+          <th>View Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let o of filteredOrders">
+          <td *ngIf="!o.deliveryStatus">
+            {{ o.getReadableDate() }}
+          </td>
+          <td *ngIf="!o.deliveryStatus">
+            {{ o.totalPrice | currency: 'BDT ' }}
+          </td>
+          <td *ngIf="!o.deliveryStatus">
+            <button
+              mat-button
+              color="primary"
+              [routerLink]="['/admin/orders/' + o.id + '/' + o.dateCreated]"
+            >
+              View
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md">
+    <p>Delivered Orders</p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Order Date</th>
+          <th>Total Price</th>
+          <th>View Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let o of filteredOrders">
+          <td *ngIf="o.deliveryStatus">
+            {{ o.getReadableDate() }}
+          </td>
+          <td *ngIf="o.deliveryStatus">
+            {{ o.totalPrice | currency: 'BDT ' }}
+          </td>
+          <td *ngIf="o.deliveryStatus">
+            <button
+              mat-button
+              color="primary"
+              [routerLink]="['/admin/orders/' + o.id + '/' + o.dateCreated]"
+            >
+              View
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

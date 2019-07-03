@@ -1,6 +1,6 @@
 import { ShoppingCartService } from './../shopping-cart.service';
 import { CategoryService } from './../category.service';
-import { AppUser } from './../models/app-user';
+import { User } from '../models/user';
 import { AuthService } from './../auth.service';
 import { Component, OnInit, Injectable } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -8,6 +8,9 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material';
 import { LoginComponent } from '../user/login/login.component';
+import { Category } from '../models/category';
+import { ChatService } from '../chat.service';
+import { Chat } from '../models/chat';
 @Injectable({
   providedIn: 'root'
 })
@@ -17,10 +20,11 @@ import { LoginComponent } from '../user/login/login.component';
   styleUrls: ['./nav.component.css']
 })
 export class NavComponent implements OnInit {
+  showSpinner = true;
   opened: boolean;
-  appUser: AppUser;
+  appUser: User;
   isHeadset: boolean;
-  categories$;
+  categories: Category[];
   shoppingCartItemCount;
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
@@ -33,9 +37,17 @@ export class NavComponent implements OnInit {
     private categoryService: CategoryService,
     private shoppingCartService: ShoppingCartService
   ) {
-    auth.appUser$.subscribe(appUser => (this.appUser = appUser));
+    auth.appUser$.subscribe(appUser => {
+      this.appUser = appUser;
+      if (appUser) {
+        this.showSpinner = false;
+      }
+    });
 
-    this.categories$ = this.categoryService.getCategory();
+    this.categoryService.getCategory().subscribe(categories => {
+      this.categories = categories;
+      this.showSpinner = false;
+    });
     this.isHandset$.subscribe(isHeadset => {
       if (!isHeadset) {
         this.opened = true;
@@ -51,9 +63,7 @@ export class NavComponent implements OnInit {
       width: '350px'
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-    });
+    dialogRef.afterClosed().subscribe(result => {});
   }
 
   closeSideNav(drawer) {
@@ -70,11 +80,15 @@ export class NavComponent implements OnInit {
   async ngOnInit() {
     const cart$ = await this.shoppingCartService.getCart();
     cart$.subscribe(cart => {
-      this.shoppingCartItemCount = 0;
-      // tslint:disable-next-line: forin
-      for (const itemId in cart.items) {
-        this.shoppingCartItemCount += cart.items[itemId].quantity;
-      }
+      this.shoppingCartItemCount = cart.getAllCartProductsQuantity();
     });
+  }
+
+  gotoTop() {
+    document.getElementById('scroll').scrollTop = 0;
+  }
+  gotoBottom() {
+    const container = document.getElementById('scroll');
+    container.scrollTop = container.scrollHeight - container.clientHeight;
   }
 }

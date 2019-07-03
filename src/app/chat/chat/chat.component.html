@@ -1,0 +1,51 @@
+<div class="child">
+  <div class="messaging">
+    <div class="inbox_msg  ">
+      <div class="mesgs  ">
+        <div class="msg_history">
+          <div *ngFor="let message of chat.messages">
+            <div class="incoming_msg" *ngIf="message?.name == 'Admin'">
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                    <b>{{ message.name }}:</b>
+                  <p>{{ message.message }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="outgoing_msg" *ngIf="message.name != 'Admin'">
+                
+              <div class="sent_msg">
+                  <b style="margin-left: auto;" >{{ message.name }}:</b>
+                <p> {{ message.message }}</p>
+              </div>
+            </div>
+            <hr />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+class="position-sticky fix"
+>
+  <div class="type_msg">
+    <div class="messaging">
+      <div class="input_msg_write">
+        <form autocomplete="off" >
+            <input
+            type="text"
+            class="write_msg"
+            placeholder="Type a message"
+            [(ngModel)]="message"
+            name="message"
+            (keyup.enter)="addMessage()"
+          />
+          <button class="msg_send_btn" type="button" (click)="addMessage()">
+              <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+            </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

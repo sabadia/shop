@@ -1,63 +1,131 @@
+import { CartProduct } from './models/cart-product';
+import { ProductService } from './product.service';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/take';
 import { Observable } from 'rxjs/observable';
+import { Product } from './models/product';
+import { ShoppingCart } from './models/shopping-cart';
+import { map } from 'rxjs/operators';
+import { number } from 'ngx-custom-validators/src/app/number/validator';
 @Injectable({
   providedIn: 'root'
 })
 export class ShoppingCartService {
   constructor(private db: AngularFireDatabase) {}
-  private create() {
-    return this.db.list('/shopping-carts').push({
+
+  private create(id) {
+    return this.db.object('/shopping-carts/' + id).set({
       dateCreated: new Date().getTime()
     });
   }
-  shoppingCartTotalItem(cart) {
-    let count = 0;
-    // tslint:disable-next-line: forin
-    for (const itemId in cart.items) {
-      count += cart.items[itemId].quantity;
+  private makeid(): string {
+    length = 20;
+    let result = '-';
+    const characters =
+      '-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (let i = 1; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
-
-    return count;
+    return result;
   }
-  async getCart(): Promise<Observable<any>> {
-    const cartId = await this.getOrCreateCartId();
-    return this.db.object('/shopping-carts/' + cartId).valueChanges();
-  }
-
-  private async getOrCreateCartId() {
-    const cartId = localStorage.getItem('cartId');
+  private async getOrCreateCartId(): Promise<string> {
+    let cartId = localStorage.getItem('cartId');
     if (cartId) {
       return cartId;
+    } else {
+      cartId = this.makeid();
+      localStorage.setItem('cartId', cartId);
+      await this.create(cartId);
+      return cartId;
     }
-    const result = await this.create();
-    localStorage.setItem('cartId', result.key);
-    return result.key;
   }
-  async addToCart(product) {
-    this.updateCart(product, +1);
-  }
-  async removeFromCart(product) {
-    this.updateCart(product, -1);
-  }
-  private async updateCart(product, value) {
+  async getCart() {
     const cartId = await this.getOrCreateCartId();
-    const item$: any = this.db
-      .object('/shopping-carts/' + cartId + '/items/' + product.key)
-      .valueChanges();
-    item$.take(1).subscribe(item => {
-      if (item) {
-        this.db
-          .object(
-            '/shopping-carts/' + cartId + '/items/' + product.key + '/quantity'
-          )
-          .set(item.quantity + value);
-      } else {
-        this.db
-          .object('/shopping-carts/' + cartId + '/items/' + product.key)
-          .set({ product, quantity: 1 });
-      }
-    });
+    return this.db
+      .object('/shopping-carts/' + cartId)
+      .snapshotChanges()
+      .pipe(
+        map(shoppingCart => {
+          const sk = shoppingCart.payload.val() as any;
+          if (!sk) {
+            const dt = this.getCurrentDateTime();
+            this.db
+              .object('/shopping-carts/' + cartId)
+              .set({ dateCreated: dt });
+            return new ShoppingCart();
+          }
+          let cartProducts: CartProduct[] = [];
+          if (sk.cartProducts) {
+            cartProducts = Object.keys(sk.cartProducts).map(key => {
+              const id = key;
+              const title = sk.cartProducts[key].title;
+              const imageUrl = sk.cartProducts[key].imageUrl;
+              const price = sk.cartProducts[key].price;
+              const quantity = sk.cartProducts[key].quantity;
+              const discount = sk.cartProducts[key].discount;
+              return new CartProduct(
+                quantity,
+                new Product(id, title, '', imageUrl, price, discount)
+              );
+            });
+          }
+          const dateCreated = sk.dateCreated;
+          return new ShoppingCart(cartId, dateCreated, cartProducts);
+        })
+      );
+  }
+  private getCurrentDateTime() {
+    const today = new Date();
+    const date =
+      today.getFullYear() +
+      '-' +
+      (today.getMonth() + 1) +
+      '-' +
+      today.getDate();
+    const time =
+      today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+    return date + '_' + time;
+  }
+  private getCartDate(cartId): string {
+    let date: string;
+    this.db
+      .object('/shopping-carts/' + cartId)
+      .snapshotChanges()
+      .pipe(
+        map(cart => {
+          const c = cart as any;
+          if (c.payload.val() != null) {
+            return c.payload.val().dateCreated;
+          } else {
+            const dt = this.getCurrentDateTime();
+            this.db
+              .object('/shopping-carts/' + cartId)
+              .set({ dateCreated: dt });
+            return dt;
+          }
+        })
+      )
+      .take(1)
+      .subscribe(d => (date = d));
+    return date;
+  }
+
+  async updateCart(cartProduct: CartProduct) {
+    const cartId = await this.getOrCreateCartId();
+    if (cartProduct.quantity === 0) {
+      this.db
+        .object('/shopping-carts/' + cartId + '/cartProducts/' + cartProduct.id)
+        .remove();
+    } else {
+      this.db
+        .object('/shopping-carts/' + cartId + '/cartProducts/' + cartProduct.id)
+        .update(cartProduct.json());
+    }
+  }
+  async clearCart() {
+    const cartId = await this.getOrCreateCartId();
+    this.db.object('/shopping-carts/' + cartId + '/cartProducts').remove();
   }
 }

@@ -1,3 +1,159 @@
-<p>
-  check-out works!
-</p>
+<div class="row">
+  <div class="col-md">
+    <mat-horizontal-stepper [linear]="true" #stepper>
+      <mat-step>
+        <ng-template matStepLabel>Fill out your details</ng-template>
+        <form #f="ngForm" (ngSubmit)="saveOrder(f)">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input
+              [(ngModel)]="order.name"
+              name="name"
+              type="text"
+              class="form-control"
+              id="name"
+              placeholder="Enter your name"
+              required
+              #name="ngModel"
+            />
+            <div
+              class="alert alert-danger"
+              *ngIf="name.touched && name.invalid"
+            >
+              title is required
+            </div>
+            <small id="nameHelp" class="form-text text-muted"
+              >please enter your name</small
+            >
+          </div>
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input
+              [(ngModel)]="order.email"
+              name="email"
+              type="email"
+              class="form-control"
+              id="email"
+              placeholder="Enter your Email address"
+              required
+              #email="ngModel"
+            />
+            <div
+              class="alert alert-danger"
+              *ngIf="email.touched && email.invalid"
+            >
+              email is required
+            </div>
+            <small id="emailHelp" class="form-text text-muted"
+              >please enter your Email</small
+            >
+          </div>
+          <div class="form-group">
+            <label for="address">Address</label>
+            <div>
+              <textarea
+                [(ngModel)]="order.address"
+                name="address"
+                type="address"
+                class="form-control"
+                id="address"
+                placeholder="Enter your full address"
+                required
+                #address="ngModel"
+              ></textarea>
+            </div>
+            <div
+              class="alert alert-danger"
+              *ngIf="address.touched && address.invalid"
+            >
+              You must have to provide your full address
+            </div>
+
+            <small id="addressHelp" class="form-text text-muted"
+              >Your full address</small
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="phoneNo">Phone no</label>
+            <input
+              [(ngModel)]="order.phone"
+              name="phoneNo"
+              type="text"
+              class="form-control"
+              id="phoneNo"
+              placeholder="Enter your Mobile number"
+              required
+              #phoneNo="ngModel"
+            />
+
+            <small id="phoneNoHelp" class="form-text text-muted"
+              >Enter your Phone number</small
+            >
+            <div
+              class="alert alert-danger"
+              *ngIf="phoneNo.touched && phoneNo.invalid"
+            >
+              Phone number is required
+            </div>
+          </div>
+          &nbsp;&nbsp;
+        </form>
+        <div>
+          <button class="float-right" mat-raised-button matStepperNext>Next</button>
+        </div>
+      </mat-step>
+      <mat-step>
+        <div>
+          <button class="float-right" mat-raised-button matStepperPrevious>Back</button>
+          <button class="float-right" mat-raised-button matStepperNext>Next</button>
+        </div>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Done</ng-template>
+        You are now done.
+        <div>
+          <button mat-raised-button matStepperPrevious>Back</button>
+          <button mat-raised-button (click)="stepper.reset()">Reset</button>
+          <button
+            class="float-right"
+            type="submit"
+            mat-raised-button
+            color="primary"
+            (click)="saveOrder(f)"
+          >
+            Place Order
+          </button>
+        </div>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </div>
+  <div class="col-md">
+    <div class="card mid">
+      <div class="card-body">
+        <h5 class="card-title">Order Summary</h5>
+        <p class="card-text">
+          You have {{ shoppingCart.getAllCartProductsQuantity() }} in your
+          shopping cart
+        </p>
+        <ul class="list-group">
+          <li
+            class="list-group-item list-group-flush"
+            *ngFor="let cartProduct of shoppingCart.cartProducts"
+          >
+            {{ cartProduct.quantity }} x {{ cartProduct.title }}
+            <div class="float-right">
+              {{ cartProduct.totalPrice() | currency: 'BDT ' }}
+            </div>
+          </li>
+          <li class="list-group-item font-weight-bold">
+            Total
+            <div class="float-right">
+              {{ shoppingCart.totalPrice() | currency: 'BDT ' }}
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

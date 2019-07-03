@@ -14,7 +14,12 @@
   width: 200px;
 }
 .container {
+  position: relative; 
+
   margin-top: 20px;
+}
+.bottom-gap {
+  padding-bottom: 150px;
 }
 
 .toolbar-container {

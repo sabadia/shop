@@ -1,3 +1,4 @@
+import { ShoppingCartService } from './shopping-cart.service';
 import { AuthService } from './auth.service';
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -12,19 +13,29 @@ export class AppComponent {
   title = 'shop';
   constructor(
     private auth: AuthService,
-    router: Router,
+    private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private shoppingCartService: ShoppingCartService
   ) {
     auth.user$.subscribe(user => {
       if (user) {
         this.userService.save(user);
-        // console.log(localStorage.getItem('returnUrl'));
         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
         if (returnUrl) {
           router.navigateByUrl(returnUrl);
         }
       }
     });
+  }
+  onActivate(event) {
+    const scrollToTop = window.setInterval(() => {
+      const pos = window.pageYOffset;
+      if (pos > 0) {
+        window.scrollTo(0, pos - 20);
+      } else {
+        window.clearInterval(scrollToTop);
+      }
+    }, 16);
   }
 }

@@ -39,12 +39,69 @@
         <div class="alert alert-danger" *ngIf="price.touched && price.invalid">
           <div *ngIf="price.errors?.required">price is required</div>
           <div *ngIf="price.errors?.min">
-            price should be zero more than zero
+            price should be zero or more than zero
           </div>
         </div>
 
         <small id="priceHelp" class="form-text text-muted"
           >Price of your product</small
+        >
+      </div>
+      <div class="form-group">
+        <label for="quantity">Quantity</label>
+        <div class="input-group-prepend">
+          <input
+            [(ngModel)]="product.quantity"
+            name="quantity"
+            type="number"
+            class="form-control"
+            id="quantity"
+            placeholder="Enter Quantity"
+            required
+            #quantity="ngModel"
+            [min]="0"
+          />
+        </div>
+        <div
+          class="alert alert-danger"
+          *ngIf="quantity.touched && quantity.invalid"
+        >
+          <div *ngIf="quantity.errors?.required">quantity is required</div>
+          <div *ngIf="quantity.errors?.min">
+            quantity should be zero or more than zero
+          </div>
+        </div>
+
+        <small id="priceHelp" class="form-text text-muted"
+          >Quantity of your product</small
+        >
+      </div>
+      <div class="form-group">
+        <label for="price">Discount % </label>
+        <div class="input-group-prepend">
+          <span class="input-group-text">%</span>
+          <input
+            [(ngModel)]="product.discount"
+            name="discount"
+            type="number"
+            class="form-control"
+            id="discount"
+            placeholder="Enter Product Discount"
+            required
+            #discount="ngModel"
+            [min]="0"
+            [max]="100"
+          />
+        </div>
+        <div class="alert alert-danger" *ngIf="price.touched && price.invalid">
+          <div *ngIf="price.errors?.required">price is required</div>
+          <div *ngIf="price.errors?.min || price.errors?.max">
+            Discount should be zero more than zero and less than 100
+          </div>
+        </div>
+
+        <small id="priceHelp" class="form-text text-muted"
+          >Discount of your product</small
         >
       </div>
       <div class="form-group">
@@ -57,8 +114,9 @@
           required
           #category="ngModel"
         >
-          <option *ngFor="let c of categories$ | async" [value]="c.key">
-            {{ c.payload.val().name }}
+          <option></option>
+          <option *ngFor="let c of categories$ | async" [value]="c.id">
+            {{ c.name }}
           </option>
         </select>
         <div
@@ -67,6 +125,23 @@
         >
           category is required
         </div>
+        <br />
+        <button
+          type="button"
+          class="btn btn-light btn-sm float-right"
+          (click)="addCategory = !addCategory"
+          (click)="removeCategory = false"
+        >
+          + Add Category
+        </button>
+        <button
+          type="button"
+          class="btn btn-light btn-sm float-right"
+          (click)="removeCategory = !removeCategory"
+          (click)="addCategory = false"
+        >
+          + Remove Category
+        </button>
       </div>
       <div class="form-group">
         <label for="imageUrl">Image Url</label>
@@ -103,6 +178,48 @@
   </div>
 
   <div class="col-md">
+    <div *ngIf="addCategory">
+      <label for="addCategory">Add new Category</label>
+      <input
+        name="addCategory"
+        id="addCategory"
+        #query
+        type="text"
+        class="form-control"
+        placeholder="Enter category name here"
+      />
+      <br />
+      <button
+        type="button"
+        class="btn btn-info btn-sm float-right"
+        (click)="addNewCategory(query.value)"
+      >
+        Add
+      </button>
+    </div>
+    <div *ngIf="removeCategory">
+      <label for="removeCategory">Remove a Category</label>
+      <select
+        name="removeCategory"
+        class="form-control"
+        id="removeCategory"
+        required
+        #removeQuery
+      >
+        <option *ngFor="let c of categories$ | async" [value]="c.id">
+          {{ c.name }}
+        </option>
+      </select>
+      <br />
+      <button
+        type="button"
+        class="btn btn-danger btn-sm float-right"
+        (click)="removeACategory(removeQuery.value)"
+      >
+        Remove
+      </button>
+    </div>
+    <br />
     <div
       class="card"
       style="width: 18rem;"
@@ -116,7 +233,7 @@
       <div class="card-body">
         <h5 class="card-title">{{ product.title }}</h5>
         <p class="card-text">
-          {{ product.price | currency }}
+          {{ product.price | currency: 'BDT ' }}
         </p>
       </div>
     </div>

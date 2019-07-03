@@ -1,20 +1,12 @@
 import { AuthService } from './auth.service';
 import { Injectable } from '@angular/core';
-import {
-  CanActivate,
-  Router,
-  ActivatedRoute,
-  RouterStateSnapshot
-} from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import 'rxjs/add/operator/map';
 import { NavComponent } from './nav/nav.component';
-import { Location } from '@angular/common';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuardService implements CanActivate {
-  public dialog: MatDialog;
   constructor(
     private auth: AuthService,
     private router: Router,
@@ -25,7 +17,9 @@ export class AuthGuardService implements CanActivate {
       if (user) {
         return true;
       }
-      this.router.navigate(['/'], { queryParams: { returnUrl: state.url } });
+      this.router.navigate([this.router.url], {
+        queryParams: { returnUrl: state.url }
+      });
       this.nav.openLogin();
       return false;
     });

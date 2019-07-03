@@ -1,17 +1,22 @@
+import { Category } from './../../models/category';
+import { Observable } from 'rxjs/observable';
 import { ProductService } from './../../product.service';
 import { CategoryService } from './../../category.service';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import 'rxjs/add/operator/take';
+import { Product } from 'src/app/models/product';
 @Component({
   selector: 'app-product-form',
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.scss']
 })
 export class ProductFormComponent implements OnInit {
-  categories$;
-  id;
-  product: any;
+  addCategory = false;
+  removeCategory = false;
+  categories$: Observable<Category[]>;
+  id = '';
+  product: Product = new Product();
   constructor(
     private categoryService: CategoryService,
     private productService: ProductService,
@@ -27,15 +32,39 @@ export class ProductFormComponent implements OnInit {
         .subscribe(p => (this.product = p));
     }
   }
-
+  addNewCategory(categoryName: string) {
+    if (categoryName === '') {
+      return;
+    }
+    const category = new Category(categoryName, categoryName);
+    this.categoryService.add(category);
+    this.addCategory = false;
+  }
+  removeACategory(categoryName: string) {
+    if (categoryName === '') {
+      return;
+    }
+    const category = new Category(categoryName, categoryName);
+    this.categoryService.remove(category);
+    this.removeCategory = false;
+  }
   save(product) {
     if (product.invalid) {
       return;
     }
+    const p = new Product(
+      this.id || '',
+      product.value.title,
+      product.value.category,
+      product.value.imageUrl,
+      product.value.price,
+      product.value.discount,
+      product.value.quantity
+    );
     if (this.id) {
-      this.productService.update(this.id, product.value);
+      this.productService.update(p);
     } else {
-      this.productService.create(product.value);
+      this.productService.create(p);
     }
     this.router.navigate(['admin/products']);
   }

@@ -7,6 +7,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { OrderSuccessComponent } from './order-success/order-success.component';
 import { MyOrdersComponent } from './my-orders/my-orders.component';
 import { AuthGuardService } from '../auth-guard.service';
+import { OrderDetailComponent } from './order-detail/order-detail.component';
 
 const routes: Routes = [
   {
@@ -27,13 +28,18 @@ const routes: Routes = [
     canActivate: [AuthGuardService]
   },
   {
-    path: 'order-success',
+    path: 'order-success/:id',
     component: OrderSuccessComponent,
     canActivate: [AuthGuardService]
   },
   {
     path: 'my-orders',
     component: MyOrdersComponent,
+    canActivate: [AuthGuardService]
+  },
+  {
+    path: 'my-orders/:id',
+    component: OrderDetailComponent,
     canActivate: [AuthGuardService]
   }
 ];
