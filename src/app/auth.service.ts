@@ -1,14 +1,14 @@
-import { User } from './models/user';
-import { Router } from '@angular/router';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { Injectable, OnInit } from '@angular/core';
-import * as firebase from 'firebase';
-import { Observable } from 'rxjs/observable';
-import { UserService } from './user.service';
-import 'rxjs/add/operator/switchMap';
-import { of } from 'rxjs';
+import { User } from "./models/user";
+import { Router } from "@angular/router";
+import { AngularFireAuth } from "@angular/fire/auth";
+import { Injectable, OnInit } from "@angular/core";
+import * as firebase from "firebase";
+import { Observable } from "rxjs/observable";
+import { UserService } from "./user.service";
+import "rxjs/add/operator/switchMap";
+import { of } from "rxjs";
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class AuthService implements OnInit {
   user$: Observable<firebase.User>;
@@ -23,7 +23,7 @@ export class AuthService implements OnInit {
 
   logOut() {
     this.fireAuth.auth.signOut();
-    this.router.navigate(['/']);
+    this.router.navigate(["/"]);
   }
 
   loginWithGoogle() {

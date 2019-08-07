@@ -96,6 +96,9 @@ export class OrderService {
             const email = u[dateCreated].shipping.email;
             const address = u[dateCreated].shipping.address;
             const phone = u[dateCreated].shipping.phone;
+            const paymentNumber = u[dateCreated].paymentNumber;
+            const paymentMethod = u[dateCreated].paymentMethod;
+            const paymentID = u[dateCreated].paymentID;
             const order: Order = new Order(
               user.key,
               dateCreated,
@@ -105,7 +108,10 @@ export class OrderService {
               phone,
               cartProducts,
               totalPrice,
-              deliveryStatus
+              deliveryStatus,
+              paymentMethod,
+              paymentNumber,
+              paymentID
             );
             return order;
           });
@@ -139,6 +145,9 @@ export class OrderService {
         const phone = o.shipping.phone;
         const totalPrice = o.totalPrice;
         const deliveryStatus = o.deliveryStatus;
+        const paymentNumber = o.paymentNumber;
+        const paymentMethod = o.paymentMethod;
+        const paymentID = o.paymentID;
         return new Order(
           id,
           dateCreated,
@@ -148,7 +157,10 @@ export class OrderService {
           phone,
           cartProducts,
           totalPrice,
-          deliveryStatus
+          deliveryStatus,
+          paymentMethod,
+          paymentNumber,
+          paymentID
         );
       });
   }
@@ -181,6 +193,9 @@ export class OrderService {
           const phone = o.shipping.phone;
           const totalPrice = o.totalPrice;
           const deliveryStatus = o.deliveryStatus;
+          const paymentNumber = o.paymentNumber;
+          const paymentMethod = o.paymentMethod;
+          const paymentID = o.paymentID;
           return new Order(
             id,
             dateCreated,
@@ -190,7 +205,10 @@ export class OrderService {
             phone,
             cartProducts,
             totalPrice,
-            deliveryStatus
+            deliveryStatus,
+            paymentMethod,
+            paymentNumber,
+            paymentID
           );
         })
       );

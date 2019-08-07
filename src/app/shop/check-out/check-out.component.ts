@@ -59,6 +59,10 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       }
     );
   }
+  setPayMethod(payMethod: string){
+    this.order.paymentMethod = payMethod;
+    console.log(this.order.paymentMethod);
+  }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }

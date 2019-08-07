@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md">
     <mat-horizontal-stepper [linear]="true" #stepper>
-      <mat-step>
+      <mat-step [completed]="!f.invalid">
         <ng-template matStepLabel>Fill out your details</ng-template>
         <form #f="ngForm" (ngSubmit)="saveOrder(f)">
           <div class="form-group">
@@ -100,19 +100,122 @@
           &nbsp;&nbsp;
         </form>
         <div>
-          <button class="float-right" mat-raised-button matStepperNext>Next</button>
+          <button class="float-right" mat-raised-button *ngIf="!f.invalid" matStepperNext>Next</button>
+        </div>
+        <div>
+          <button class="float-right" disabled mat-raised-button *ngIf="f.invalid">Next</button>
         </div>
       </mat-step>
-      <mat-step>
+      <mat-step [completed]="order.paymentMethod !=''">
+          <ng-template matStepLabel>select your payment method</ng-template>
+          <table class="table">
+            <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td >
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="payMethod" id="bkash" value="bkash" (click)="setPayMethod('bkash')">
+                      <label class="form-check-label" for="bkash">
+                        Payment with Bkash
+                      </label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td >
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="payMethod" id="rocket" value="rocket" (click)="setPayMethod('rocket')">
+                      <label class="form-check-label" for="rocket">
+                        Payment with Rocket
+                      </label>
+                    </div>
+                  </td>
+                  </tr>
+            </tbody>
+            </table>
         <div>
+          <button class="float-right" mat-raised-button *ngIf="order.paymentMethod !=''" matStepperNext>Next</button>
+          <button class="float-right" disabled mat-raised-button *ngIf="order.paymentMethod ==''">Next</button>
           <button class="float-right" mat-raised-button matStepperPrevious>Back</button>
+        </div>
+      </mat-step>
+      <mat-step [completed]="order.paymentNumber !='' && order.paymentID !=''">
+        <div *ngIf="order.paymentMethod == 'rocket'">
+          <h4>Please send {{ (shoppingCart.totalPrice() + (shoppingCart.totalPrice() * 1.8 / 100)) | currency: 'BDT ' }} (including Rocket charge) in 01XXXXXXXXXX rocket number and then continue</h4>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>Enter your 12 digit rocket number</td>
+                <td><input type="text" [(ngModel)]="order.paymentNumber"></td>
+              </tr>
+              <tr>
+                <td>Enter transaction number</td>
+                <td><input type="text" [(ngModel)]="order.paymentID"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="order.paymentMethod == 'bkash'">
+          <h4>Please send {{ (shoppingCart.totalPrice() + (shoppingCart.totalPrice() * 1.85 / 100)) | currency: 'BDT ' }} (including Bkash charge) in 01XXXXXXXXX bkash number and then continue</h4>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>Enter your 11 digit bkash number</td>
+                <td><input type="text" [(ngModel)]="order.paymentNumber"></td>
+              </tr>
+              <tr>
+                <td>Enter transaction number</td>
+                <td><input type="text" [(ngModel)]="order.paymentID"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
           <button class="float-right" mat-raised-button matStepperNext>Next</button>
+          <button class="float-right" mat-raised-button matStepperPrevious>Back</button>
         </div>
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>Done</ng-template>
         You are now done.
-        <div>
+        <div class="card-body">
+          <h5 class="card-title">Shipping Informaton</h5>
+          <ul class="list-group ">
+            <li class="list-group-item list-group-flush">
+              Name:
+              <div class="float-right">
+                {{ order.name }}
+              </div>
+            </li>
+            <li class="list-group-item list-group-flush">
+              Email:
+              <div class="float-right">
+                {{ order.email }}
+              </div>
+            </li>
+            <li class="list-group-item list-group-flush">
+              Phone no:
+              <div class="float-right">
+                {{ order.phone }}
+              </div>
+            </li>
+            <li class="list-group-item list-group-flush">
+              Address:
+              <div class="float-right">
+                {{ order.address }}
+              </div>
+            </li>
+            <li class="list-group-item list-group-flush">
+              Order Date:
+              <div class="float-right">
+                {{ order.dateCreated }}
+              </div>
+            </li>
+          </ul>
+          <br />
+        </div>
+      <div>
           <button mat-raised-button matStepperPrevious>Back</button>
           <button mat-raised-button (click)="stepper.reset()">Reset</button>
           <button

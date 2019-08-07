@@ -10,7 +10,10 @@ export class Order {
   private _totalPrice: number;
   private _email: string;
   private _deliveryStatus: boolean;
-
+  private _paymentMethod: string;
+  private _paymentNumber: string;
+  private _paymentID: string;
+  
   constructor(
     id: string = '',
     dateCreated: string = '',
@@ -20,7 +23,10 @@ export class Order {
     phone: string = '',
     cartProducts: CartProduct[] = [],
     totalPrice: number = 0,
-    deliveryStatus: boolean = false
+    deliveryStatus: boolean = false,
+    paymentMethod: string = "",
+    paymentNumber: string = "",
+    paymentId: string = ""
   ) {
     this._id = id;
     this.dateCreated = dateCreated || this.getCurrentDateTime();
@@ -31,6 +37,28 @@ export class Order {
     this.cartProducts = cartProducts;
     this._totalPrice = totalPrice;
     this._deliveryStatus = deliveryStatus;
+    this.paymentMethod = paymentMethod;
+    this.paymentNumber = paymentNumber;
+    this.paymentID = paymentId;
+  }
+
+  public get paymentID(): string {
+    return this._paymentID;
+  }
+  public set paymentID(value: string) {
+    this._paymentID = value;
+  }
+  public get paymentNumber(): string {
+    return this._paymentNumber;
+  }
+  public set paymentNumber(value: string) {
+    this._paymentNumber = value;
+  }
+  public get paymentMethod(): string {
+    return this._paymentMethod;
+  }
+  public set paymentMethod(value: string) {
+    this._paymentMethod = value;
   }
   public get deliveryStatus(): boolean {
     return this._deliveryStatus;
@@ -67,7 +95,12 @@ export class Order {
     return this._totalPrice;
   }
   public set totalPrice(price: number) {
-    this._totalPrice = price;
+    if(this.paymentMethod == 'bkash'){
+      this._totalPrice = price + price * 1.85/100;
+    }
+    else if(this.paymentMethod == 'rocket'){
+      this._totalPrice = price + price * 1.8/100;
+    }
   }
   public get cartProducts(): CartProduct[] {
     return this._cartProducts;
@@ -135,7 +168,10 @@ export class Order {
       },
       products: this.listToObject(),
       deliveryStatus: this.deliveryStatus,
-      totalPrice: this.totalPrice
+      totalPrice: this.totalPrice,
+      paymentMethod: this.paymentMethod,
+      paymentNumber: this.paymentNumber,
+      paymentID: this.paymentID
     };
     return obj;
   }

@@ -2,22 +2,29 @@ import { Category } from './../../models/category';
 import { Observable } from 'rxjs/observable';
 import { ProductService } from './../../product.service';
 import { CategoryService } from './../../category.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import 'rxjs/add/operator/take';
 import { Product } from 'src/app/models/product';
+import { AngularFireStorage } from '@angular/fire/storage';
+import {finalize} from "rxjs/operators"
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-product-form',
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.scss']
 })
-export class ProductFormComponent implements OnInit {
+export class ProductFormComponent implements OnInit,OnDestroy {
   addCategory = false;
   removeCategory = false;
   categories$: Observable<Category[]>;
   id = '';
+  image : any = null;
+  imageFile: any;
   product: Product = new Product();
+  subscription:Subscription = null;
   constructor(
+    private angularFireStorage:AngularFireStorage,
     private categoryService: CategoryService,
     private productService: ProductService,
     private router: Router,
@@ -48,25 +55,36 @@ export class ProductFormComponent implements OnInit {
     this.categoryService.remove(category);
     this.removeCategory = false;
   }
+  saveToDBStorage(){
+    
+  }
   save(product) {
     if (product.invalid) {
       return;
     }
-    const p = new Product(
-      this.id || '',
-      product.value.title,
-      product.value.category,
-      product.value.imageUrl,
-      product.value.price,
-      product.value.discount,
-      product.value.quantity
-    );
-    if (this.id) {
-      this.productService.update(p);
-    } else {
-      this.productService.create(p);
-    }
-    this.router.navigate(['admin/products']);
+    const filePath ="product_images/"+ new Date().getTime() + this.imageFile.name;
+    const ref = this.angularFireStorage.ref(filePath);
+    console.log('yes');
+    this.subscription = this.angularFireStorage.upload(filePath,this.imageFile).snapshotChanges().pipe(finalize(()=>{
+      ref.getDownloadURL().subscribe(url => this.product.imageUrl = url)
+      const p = new Product(
+        this.id || '',
+        product.value.title,
+        product.value.category,
+        this.product.imageUrl,
+        product.value.price,
+        product.value.discount,
+        product.value.quantity
+      );
+      console.log(p)
+      if (this.id) {
+        this.productService.update(p);
+      } else {
+        this.productService.create(p);
+      }
+      this.router.navigate(['admin/products']);
+    })).subscribe();
+    
   }
 
   delete() {
@@ -75,6 +93,21 @@ export class ProductFormComponent implements OnInit {
       this.router.navigate(['admin/products']);
     }
   }
+  setImageUrl(event: any){
+    if(event.target.files && event.target.files[0]){
+      const reader = new FileReader();
+      reader.onload = (e: any) => this.product.imageUrl = e.target.result;
+      reader.readAsDataURL(event.target.files[0]);
+      this.imageFile = event.target.files[0];
+    }
+    console.log(this.image)
+  }
 
   ngOnInit() {}
+  ngOnDestroy(): void {
+    if(this.subscription!=null){
+      this.subscription.unsubscribe();
+    }
+    
+  }
 }

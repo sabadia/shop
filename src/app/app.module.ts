@@ -30,6 +30,7 @@ import {
 import { UserModule } from './user/user.module';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
+import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { environment } from 'src/environments/environment';
 import { UserService } from './user.service';
@@ -64,7 +65,8 @@ import { LoadingSpinnerComponent } from './ui/loading-spinner/loading-spinner.co
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireDatabaseModule,
     AngularFireAuthModule,
-    DataTableModule.forRoot()
+    DataTableModule.forRoot(),
+    AngularFireStorageModule
   ],
   providers: [
     AuthService,

@@ -34,6 +34,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     order.changeDeliveryStatus();
     this.orderService.addOrder(order);
   }
+  deleteOrder(){
+    this.subscription.unsubscribe();
+    this.orderService.deleteOrder(this.order);
+    this.router.navigate(['/admin/orders'])
+  }
   ngOnInit() {}
   ngOnDestroy(): void {
     this.subscription.unsubscribe();

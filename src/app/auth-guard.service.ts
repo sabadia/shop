@@ -1,10 +1,12 @@
-import { AuthService } from './auth.service';
-import { Injectable } from '@angular/core';
-import { CanActivate, Router, RouterStateSnapshot } from '@angular/router';
-import 'rxjs/add/operator/map';
-import { NavComponent } from './nav/nav.component';
+import { AuthService } from "./auth.service";
+import { Injectable } from "@angular/core";
+import { CanActivate, Router, RouterStateSnapshot } from "@angular/router";
+import "rxjs/add/operator/map";
+import { NavComponent } from "./nav/nav.component";
+import { LoginComponent } from "./user/login/login.component";
+import { MatDialogRef } from "@angular/material";
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class AuthGuardService implements CanActivate {
   constructor(

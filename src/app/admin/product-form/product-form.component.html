@@ -144,17 +144,17 @@
         </button>
       </div>
       <div class="form-group">
-        <label for="imageUrl">Image Url</label>
+        <label for="imageUrl">Image </label>
         <input
-          [(ngModel)]="product.imageUrl"
+          [(ngModel)]="image"
+          (change)="setImageUrl($event)"
           name="imageUrl"
-          type="text"
+          type="file"
           class="form-control"
           id="imageUrl"
-          placeholder="Enter Image Url"
+          placeholder="Select your image"
           required
           #imageUrl="ngModel"
-          url
         />
 
         <small id="imageUrlHelp" class="form-text text-muted"
@@ -165,7 +165,6 @@
           *ngIf="imageUrl.touched && imageUrl.invalid"
         >
           <div *ngIf="imageUrl.errors?.required">imageUrl is required</div>
-          <div *ngIf="imageUrl.errors?.url">this is not a valid url</div>
         </div>
       </div>
       <button type="submit" mat-raised-button color="primary">

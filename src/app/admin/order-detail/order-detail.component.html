@@ -35,6 +35,24 @@
               {{ order.dateCreated }}
             </div>
           </li>
+          <li class="list-group-item list-group-flush">
+            Payment method:
+            <div class="float-right">
+              {{ order.paymentMethod }}
+            </div>
+          </li>
+          <li class="list-group-item list-group-flush">
+            Payment number:
+            <div class="float-right">
+              {{ order.paymentNumber }}
+            </div>
+          </li>
+          <li class="list-group-item list-group-flush">
+            Payment Id:
+            <div class="float-right">
+              {{ order.paymentID }}
+            </div>
+          </li>
         </ul>
         <br />
         <div>
@@ -53,6 +71,14 @@
             (click)="changeDeliveryStatus()"
           >
             mark as not Delivered
+          </button>
+          <button
+          class="float-right"
+            mat-raised-button
+            color="primary"
+            (click)="deleteOrder()"
+          >
+            Delete Order
           </button>
         </div>
       </div>
